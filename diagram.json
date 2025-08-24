@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "author": "Patrick Dolan",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-devkit-c-v4",
+      "id": "esp",
+      "top": -19.2,
+      "left": 120.04,
+      "attrs": {}
+    },
+    {
+      "type": "board-grove-oled-sh1107",
+      "id": "oled1",
+      "top": -182.63,
+      "left": 89.5,
+      "attrs": {}
+    }
+  ],
+  "connections": [
+    ["esp:TX", "$serialMonitor:RX", "", []],
+    ["esp:RX", "$serialMonitor:TX", "", []],
+    ["esp:GND.2", "oled1:GND.1", "black", ["v-9.6", "h57.6", "v-86.4"]],
+    ["esp:3V3", "oled1:VCC", "red", ["h-9.45", "v-19.2", "h153.6", "v-67.2"]],
+    ["esp:22", "oled1:SCL.1", "violet", ["h76.8", "v-105.6", "h-9.6"]],
+    ["esp:21", "oled1:SDA", "magenta", ["h67.2", "v-144"]]
+  ],
+  "dependencies": {}
+}

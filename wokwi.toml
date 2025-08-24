@@ -1,0 +1,6 @@
+[wokwi]
+version = 1
+firmware = '.pio/build/espwroom32/firmware.bin'
+elf = '.pio/build/espwroom32/firmware.elf'
+gdbServerPort=3333
+cpuFrequency = 8
