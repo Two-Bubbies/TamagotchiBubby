@@ -11,12 +11,11 @@ const int I2C_FREQUENCY = 800000;    // I2C communication frequency in Hz (max)
 const byte SDA_PIN = 21; // I2C data pin for OLED display
 const byte SCL_PIN = 22; // I2C clock pin for OLED display
 
-// Buttons -TODO define pins
+// Buttons
 
-// const byte A_BUTTON_PIN = ;
-// const byte B_BUTTON_PIN = ;
-// const byte C_BUTTON_PIN = ;
-// const byte D_BUTTON_PIN = ;
+const byte A_BUTTON_PIN = 19;
+const byte B_BUTTON_PIN = 18;
+const byte C_BUTTON_PIN = 5;
 
 //----------------------------------------------
 

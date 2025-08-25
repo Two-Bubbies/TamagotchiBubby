@@ -12,42 +12,40 @@ struct Button
   bool pressed;
 };
 
-Button button1 = {19, 0, false};
-Button button2 = {18, 0, false};
-Button button3 = {5, 0, false};
+Button buttonA = {A_BUTTON_PIN, 0, false};
+Button buttonB = {B_BUTTON_PIN, 0, false};
+Button buttonC = {C_BUTTON_PIN, 0, false};
 
 // variables to keep track of the timing of recent interrupts
 unsigned long button_time = 0;
 unsigned long last_button_time = 0;
+const uint32_t DEBOUNCE_DELAY = 250;
+unsigned long lastButtonPressTime = 0;
 
-void IRAM_ATTR isr1()
+void IRAM_ATTR buttonISR()
 {
-  button_time = millis();
-  if (button_time - last_button_time > 250)
+  uint32_t currentMillis = millis();
+
+  if (currentMillis - lastButtonPressTime > DEBOUNCE_DELAY)
   {
-    button1.numberKeyPresses++;
-    button1.pressed = true;
-    last_button_time = button_time;
-  }
-}
-void IRAM_ATTR isr2()
-{
-  button_time = millis();
-  if (button_time - last_button_time > 250)
-  {
-    button2.numberKeyPresses++;
-    button2.pressed = true;
-    last_button_time = button_time;
-  }
-}
-void IRAM_ATTR isr3()
-{
-  button_time = millis();
-  if (button_time - last_button_time > 250)
-  {
-    button3.numberKeyPresses++;
-    button3.pressed = true;
-    last_button_time = button_time;
+    lastButtonPressTime = currentMillis;
+
+    // Check which button was pressed
+    if (digitalRead(buttonA.PIN) == LOW)
+    {
+      buttonA.numberKeyPresses++;
+      buttonA.pressed = true;
+    }
+    else if (digitalRead(buttonB.PIN) == LOW)
+    {
+      buttonB.numberKeyPresses++;
+      buttonB.pressed = true;
+    }
+    else if (digitalRead(buttonC.PIN) == LOW)
+    {
+      buttonC.numberKeyPresses++;
+      buttonC.pressed = true;
+    }
   }
 }
 
@@ -59,14 +57,14 @@ void setup()
   Serial.println("Tamagotchi-Bubby Booting...");
 
   // initialize the pushbutton pins as inputs:
-  pinMode(button1.PIN, INPUT_PULLUP);
-  attachInterrupt(button1.PIN, isr1, FALLING);
+  pinMode(buttonA.PIN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(buttonA.PIN), buttonISR, FALLING);
 
-  pinMode(button2.PIN, INPUT_PULLUP);
-  attachInterrupt(button2.PIN, isr2, FALLING);
+  pinMode(buttonB.PIN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(buttonB.PIN), buttonISR, FALLING);
 
-  pinMode(button3.PIN, INPUT_PULLUP);
-  attachInterrupt(button3.PIN, isr3, FALLING);
+  pinMode(buttonC.PIN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(buttonC.PIN), buttonISR, FALLING);
 
   // Setup I2C Bus
   Wire.setPins(SDA_PIN, SCL_PIN);
@@ -84,20 +82,23 @@ void loop()
   display.writeString("Tamagotchi Bubby", posX, 0, FontSize::small);
   er_oled_display(display.oled_buf);
   er_oled_clear(display.oled_buf);
-  if (button1.pressed)
+  if (buttonA.pressed)
   {
-    Serial.printf("Button 1 has been pressed %u times\n", button1.numberKeyPresses);
-    button1.pressed = false;
+    display.writeString("Button A pressed", 0, 20, FontSize::small);
+    er_oled_display(display.oled_buf);
+    buttonA.pressed = false;
   }
-  if (button2.pressed)
+  if (buttonB.pressed)
   {
-    Serial.printf("Button 2 has been pressed %u times\n", button2.numberKeyPresses);
-    button2.pressed = false;
+    display.writeString("Button B pressed", 0, 20, FontSize::small);
+    er_oled_display(display.oled_buf);
+    buttonB.pressed = false;
   }
-  if (button3.pressed)
+  if (buttonC.pressed)
   {
-    Serial.printf("Button 3 has been pressed %u times\n", button3.numberKeyPresses);
-    button3.pressed = false;
+    display.writeString("Button C pressed", 0, 20, FontSize::small);
+    er_oled_display(display.oled_buf);
+    buttonC.pressed = false;
   }
   posX++;
   if (posX >= WIDTH)
