@@ -7,17 +7,21 @@ EastRising Technology Co.,LTD
 #include "er_oled.h"
 #include "Arduino.h"
 
+TwoWire *oled_wire;
 void I2C_Write_Byte(uint8_t value, uint8_t Cmd)
 {
     uint8_t Addr = 0x3c;
-    Wire.beginTransmission(Addr);
-    Wire.write(Cmd);
-    Wire.write(value);
-    Wire.endTransmission();
+    oled_wire->beginTransmission(Addr);
+    oled_wire->write(Cmd);
+    oled_wire->write(value);
+    oled_wire->endTransmission();
 }
 
-void er_oled_begin()
+void er_oled_begin(TwoWire *wire)
 {
+    oled_wire = wire;
+
+    // IS THIS NECESSARY? seems like RESET pin is unused
     pinMode(OLED_RST, OUTPUT);
     digitalWrite(OLED_RST, HIGH);
     delay(10);

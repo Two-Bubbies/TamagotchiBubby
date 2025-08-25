@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "author": "Patrick Dolan",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": -19.2, "left": 120.04, "attrs": {} },
+    {
+      "type": "board-grove-oled-sh1107",
+      "id": "oled1",
+      "top": -182.63,
+      "left": 89.5,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-pushbutton-6mm",
+      "id": "btn1",
+      "top": 132.2,
+      "left": 316.8,
+      "attrs": { "color": "green", "xray": "1" }
+    },
+    {
+      "type": "wokwi-pushbutton-6mm",
+      "id": "btn2",
+      "top": 170.6,
+      "left": 316.8,
+      "attrs": { "color": "blue", "xray": "1" }
+    },
+    {
+      "type": "wokwi-pushbutton-6mm",
+      "id": "btn3",
+      "top": 209,
+      "left": 316.8,
+      "attrs": { "color": "yellow", "xray": "1" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:GND.2", "oled1:GND.1", "black", [ "v-9.6", "h57.6", "v-86.4" ] ],
+    [ "esp:3V3", "oled1:VCC", "red", [ "h-9.45", "v-19.2", "h153.6", "v-67.2" ] ],
+    [ "esp:22", "oled1:SCL.1", "violet", [ "h76.8", "v-105.6", "h-9.6" ] ],
+    [ "esp:21", "oled1:SDA", "magenta", [ "h67.2", "v-144" ] ],
+    [ "btn1:1.l", "esp:19", "green", [ "h-28.8", "v-57.6" ] ],
+    [ "btn2:1.l", "esp:18", "blue", [ "h-48", "v-86.4", "h-48", "v0" ] ],
+    [ "btn3:1.l", "esp:5", "yellow", [ "h-67.2", "v-115.2" ] ],
+    [ "btn1:2.l", "esp:GND.3", "green", [ "h-76.8", "v-86" ] ],
+    [ "btn2:2.l", "esp:GND.3", "blue", [ "h-76.8", "v-124.4" ] ],
+    [ "btn3:2.l", "esp:GND.3", "gold", [ "h-76.8", "v-162.8" ] ]
+  ],
+  "dependencies": {}
+}
