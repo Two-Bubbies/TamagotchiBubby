@@ -4,6 +4,7 @@
 
 const int SERIAL_BAUD_RATE = 115200; // Serial communication baud rate
 const int I2C_FREQUENCY = 800000;    // I2C communication frequency in Hz (max)
+const int DEBOUNCE_DELAY = 250;
 
 //-----------------Pin Mapping-------------------
 

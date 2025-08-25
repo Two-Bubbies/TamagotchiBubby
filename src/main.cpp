@@ -19,7 +19,6 @@ Button buttonC = {C_BUTTON_PIN, 0, false};
 // variables to keep track of the timing of recent interrupts
 unsigned long button_time = 0;
 unsigned long last_button_time = 0;
-const uint32_t DEBOUNCE_DELAY = 250;
 unsigned long lastButtonPressTime = 0;
 
 void IRAM_ATTR buttonISR()
