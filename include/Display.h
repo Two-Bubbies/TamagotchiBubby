@@ -60,7 +60,7 @@ public:
     void begin();
 
     //----Commands-----
-    void write();
+    void updateScreen();
     void clear();
     void turnOff();
     // Clocks
@@ -81,7 +81,6 @@ private:
     uint8_t oled_buf[WIDTH * HEIGHT / 8];
     OscillatorFrequency oscFreq = OSC_POR;
     DivideRatio divRatio = DR_POR;
-    void sendClockSettings();
 };
 
 #endif // DISPLAY_H

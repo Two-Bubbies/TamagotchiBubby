@@ -72,31 +72,33 @@ void setup()
 
   // Start OLED Display
   display.begin();
+  display.writeString("Tamagotchi Bubby", 0, 0, FontSize::small);
+  display.updateScreen();
 }
 
 int posX = 0;
 
 void loop()
 {
-  display.writeString("Tamagotchi Bubby", posX, 0, FontSize::small);
-  er_oled_display(display.oled_buf);
-  er_oled_clear(display.oled_buf);
   if (buttonA.pressed)
   {
+    display.clear();
     display.writeString("Button A pressed", 0, 20, FontSize::small);
-    er_oled_display(display.oled_buf);
+    display.updateScreen();
     buttonA.pressed = false;
   }
   if (buttonB.pressed)
   {
+    display.clear();
     display.writeString("Button B pressed", 0, 20, FontSize::small);
-    er_oled_display(display.oled_buf);
+    display.updateScreen();
     buttonB.pressed = false;
   }
   if (buttonC.pressed)
   {
+    display.clear();
     display.writeString("Button C pressed", 0, 20, FontSize::small);
-    er_oled_display(display.oled_buf);
+    display.updateScreen();
     buttonC.pressed = false;
   }
   posX++;

@@ -12,7 +12,7 @@ void Display::begin()
     er_oled_begin();
 }
 
-void Display::write()
+void Display::updateScreen()
 {
     er_oled_display(this->oled_buf);
 }
