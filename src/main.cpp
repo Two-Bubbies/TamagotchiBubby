@@ -3,7 +3,7 @@
 #include <DeviceConfig.h>
 #include "Display.h"
 
-Display display(&Wire);
+Display display(OLED_WIDTH, OLED_HEIGHT, &Wire, OLED_RST_PIN);
 
 struct Button
 {
@@ -48,6 +48,8 @@ void IRAM_ATTR buttonISR()
   }
 }
 
+CursorPosition cursorPos(16, 64);
+
 void setup()
 {
   // Setup Serial Communication
@@ -71,39 +73,43 @@ void setup()
   Wire.setClock(I2C_FREQUENCY);
 
   // Start OLED Display
-  display.begin();
-  display.writeString("Tamagotchi Bubby", 0, 0, FontSize::small);
-  display.updateScreen();
+  display.begin(OLED_X_OFFSET);
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.setTextSize(1);
+  display.setTextColor(SH110X_WHITE);
+  display.print("Tamagotchi-Bubby");
+  display.display();
 }
-
-int posX = 0;
 
 void loop()
 {
   if (buttonA.pressed)
   {
-    display.clear();
-    display.writeString("Button A pressed", 0, 20, FontSize::small);
-    display.updateScreen();
+
+    display.clearDisplay();
+    const String message = "Button A pressed";
+    display.setCursor(display.centerText(message));
+    display.print(message);
+    display.display();
     buttonA.pressed = false;
   }
   if (buttonB.pressed)
   {
-    display.clear();
-    display.writeString("Button B pressed", 0, 20, FontSize::small);
-    display.updateScreen();
+    display.clearDisplay();
+    const String message = "Button B pressed";
+    display.setCursor(display.centerText(message));
+    display.print(message);
+    display.display();
     buttonB.pressed = false;
   }
   if (buttonC.pressed)
   {
-    display.clear();
-    display.writeString("Button C pressed", 0, 20, FontSize::small);
-    display.updateScreen();
+    display.clearDisplay();
+    const String message = "Button C pressed";
+    display.setCursor(display.centerText(message));
+    display.print(message);
+    display.display();
     buttonC.pressed = false;
-  }
-  posX++;
-  if (posX >= WIDTH)
-  {
-    posX = 0;
   }
 }

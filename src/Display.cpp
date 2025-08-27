@@ -1,62 +1,33 @@
 #include <Arduino.h>
-#include <Wire.h>
-#include "Display.h"
+#include <Display.h>
+#include <DeviceConfig.h>
 
-Display::Display(TwoWire *wire = &Wire)
+void Display::begin(uint8_t offsetX)
 {
-    this->wire = wire;
+    this->setOffsetX(offsetX);
+    Adafruit_SH1107::begin();
 }
-
-void Display::begin()
+void Display::setCursor(int x, int y)
 {
-    er_oled_begin();
-}
-
-void Display::updateScreen()
-{
-    er_oled_display(this->oled_buf);
+    Adafruit_SH1107::setCursor(x, y);
 }
 
-void Display::turnOff()
+void Display::setCursor(CursorPosition pos)
 {
-    command(0xAE);
+    Adafruit_SH1107::setCursor(pos.x, pos.y);
 }
 
-void Display::sendClockSettings()
+void Display::setOffsetX(uint8_t offset)
 {
-    command(0xd5);
-    // TODO is this right?
-    command((this->oscFreq & this->divRatio));
-    Serial.println((this->oscFreq << 4 | this->divRatio), BIN);
+    this->_page_start_offset = offset;
 }
 
-void Display::setOscillatorFrequency(OscillatorFrequency freq)
+CursorPosition Display::centerText(String text)
 {
-    this->oscFreq = freq;
+    int16_t x1, y1;
+    uint16_t w, h;
+    this->getTextBounds(text, 0, 0, &x1, &y1, &w, &h);
+    int x = (this->width() - w) / 2;
+    int y = (this->height() - h) / 2;
+    return CursorPosition(x, y);
 }
-
-void Display::setDivideRatio(DivideRatio ratio)
-{
-    this->divRatio = ratio;
-}
-
-void Display::setNegative()
-{
-    command(0xa7);
-}
-void Display::setPositive()
-{
-    command(0xA6);
-}
-void Display::clear()
-{
-    er_oled_clear(this->oled_buf);
-}
-
-void Display::writeString(String str, uint8_t posX, uint8_t posY, FontSize fontSize)
-{
-    er_oled_string(posX, posY, str.c_str(), fontSize, 1, this->oled_buf);
-}
-
-// command(0xd5); // Set Frame Frequency
-// command(0x50); // 104Hz

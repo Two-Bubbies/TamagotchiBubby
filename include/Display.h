@@ -2,15 +2,8 @@
 #define DISPLAY_H
 
 #include <Arduino.h>
-#include <Wire.h>
-#include <er_oled.h>
-
-// TODO: what is mode?
-enum FontSize
-{
-    small = 12,
-    large = 16
-};
+#include <Adafruit_SH110X.h>
+#include <DeviceConfig.h>
 
 enum OscillatorFrequency
 {
@@ -50,37 +43,31 @@ enum DivideRatio
     DR_14 = 14,
     DR_15 = 15,
     DR_16 = 16
-
 };
 
-class Display
+class CursorPosition
 {
 public:
-    Display(TwoWire *wire);
-    void begin();
+    CursorPosition(int x, int y) : x(x), y(y) {}
+    int x;
+    int y;
+};
 
-    //----Commands-----
-    void updateScreen();
-    void clear();
-    void turnOff();
-    // Clocks
-    void setOscillatorFrequency(OscillatorFrequency freq);
-    void setDivideRatio(DivideRatio ratio);
-    void sendClockSettings();
+class Display : public Adafruit_SH1107
+{
+    using Adafruit_SH1107::Adafruit_SH1107;
 
-    // Display Modes
-    void setNegative();
-    void setPositive();
-    //--------------
-
-    // Writing to Buffer
-    void writeString(String str, uint8_t posX, uint8_t posY, FontSize fontSize = FontSize::small);
-
-private:
-    TwoWire *wire;
-    uint8_t oled_buf[WIDTH * HEIGHT / 8];
-    OscillatorFrequency oscFreq = OSC_POR;
-    DivideRatio divRatio = DR_POR;
+public:
+    void setCursor(CursorPosition pos);
+    void setCursor(int x, int y);
+    void setOffsetX(uint8_t offset);
+    void begin(uint8_t offsetX = 96);
+    CursorPosition centerText(String text);
+    // TODO: If we have a center position w/ just the character,
+    // doesn't make sense to clear the whole screen
+    // when we want to just clear the center character, or the icons etc.
+    void clearCenter();
+    void clearIcons();
 };
 
 #endif // DISPLAY_H
