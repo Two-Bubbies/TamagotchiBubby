@@ -3,8 +3,6 @@
 #include <DeviceConfig.h>
 #include "Display.h"
 
-Display display(OLED_WIDTH, OLED_HEIGHT, &Wire, OLED_RST_PIN);
-
 struct Button
 {
   const uint8_t PIN;
@@ -15,6 +13,7 @@ struct Button
 Button buttonA = {A_BUTTON_PIN, 0, false};
 Button buttonB = {B_BUTTON_PIN, 0, false};
 Button buttonC = {C_BUTTON_PIN, 0, false};
+Display display(OLED_WIDTH, OLED_HEIGHT, &Wire, OLED_RST_PIN);
 
 // variables to keep track of the timing of recent interrupts
 unsigned long button_time = 0;
@@ -48,7 +47,7 @@ void IRAM_ATTR buttonISR()
   }
 }
 
-CursorPosition cursorPos(16, 64);
+Coordinates cursorPos(16, 64);
 
 void setup()
 {
@@ -73,12 +72,22 @@ void setup()
   Wire.setClock(I2C_FREQUENCY);
 
   // Start OLED Display
-  display.begin(OLED_X_OFFSET);
+  display.begin();
   display.clearDisplay();
-  display.setCursor(0, 0);
+  display.setCursor(0, 64);
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
   display.print("Tamagotchi-Bubby");
+  display.display();
+  delay(1000);
+  display.drawIcon(ICON_SET_TOP, ICON_SLOT_A);
+  display.drawIcon(ICON_SET_TOP, ICON_SLOT_B);
+  display.drawIcon(ICON_SET_TOP, ICON_SLOT_C);
+  display.drawIcon(ICON_SET_TOP, ICON_SLOT_D);
+  display.drawIcon(ICON_SET_BOTTOM, ICON_SLOT_A);
+  display.drawIcon(ICON_SET_BOTTOM, ICON_SLOT_B);
+  display.drawIcon(ICON_SET_BOTTOM, ICON_SLOT_C);
+  display.drawIcon(ICON_SET_BOTTOM, ICON_SLOT_D);
   display.display();
 }
 
@@ -86,30 +95,29 @@ void loop()
 {
   if (buttonA.pressed)
   {
-
+    buttonA.pressed = false;
     display.clearDisplay();
     const String message = "Button A pressed";
     display.setCursor(display.centerText(message));
     display.print(message);
     display.display();
-    buttonA.pressed = false;
   }
   if (buttonB.pressed)
   {
+    buttonB.pressed = false;
     display.clearDisplay();
     const String message = "Button B pressed";
     display.setCursor(display.centerText(message));
     display.print(message);
     display.display();
-    buttonB.pressed = false;
   }
   if (buttonC.pressed)
   {
+    buttonC.pressed = false;
     display.clearDisplay();
     const String message = "Button C pressed";
     display.setCursor(display.centerText(message));
     display.print(message);
     display.display();
-    buttonC.pressed = false;
   }
 }

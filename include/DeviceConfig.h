@@ -22,7 +22,6 @@ const byte C_BUTTON_PIN = 5;
 const int OLED_WIDTH = 128;  // OLED display width, in pixels
 const int OLED_HEIGHT = 128; // OLED display height, in pixels
 const int OLED_RST_PIN = 4;  // OLED reset pin (or -1 if sharing
-const uint8_t OLED_X_OFFSET = 96;
 
 //----------------------------------------------
 

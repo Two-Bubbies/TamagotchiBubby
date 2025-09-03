@@ -1,56 +1,66 @@
+#pragma once
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
 #include <Arduino.h>
 #include <Adafruit_SH110X.h>
 #include <DeviceConfig.h>
-
-enum OscillatorFrequency
-{
-    OSC_MINUS_25 = 0x0, // -25%
-    OSC_MINUS_20 = 0x1, // -20%
-    OSC_MINUS_15 = 0x2, // -15%
-    OSC_MINUS_10 = 0x3, // -10%
-    OSC_MINUS_5 = 0x4,  // -5%
-    OSC_POR = 0x5,      // ƒOSC (POR)
-    OSC_PLUS_5 = 0x6,   // +5%
-    OSC_PLUS_10 = 0x7,  // +10%
-    OSC_PLUS_15 = 0x8,  // +15%
-    OSC_PLUS_20 = 0x9,  // +20%
-    OSC_PLUS_25 = 0xA,  // +25%
-    OSC_PLUS_30 = 0xB,  // +30%
-    OSC_PLUS_35 = 0xC,  // +35%
-    OSC_PLUS_40 = 0xD,  // +40%
-    OSC_PLUS_45 = 0xE,  // +45%
-    OSC_PLUS_50 = 0xF   // +50%
-};
-
-enum DivideRatio
-{
-    DR_POR = 1,
-    DR_2 = 2,
-    DR_3 = 3,
-    DR_4 = 4,
-    DR_5 = 5,
-    DR_6 = 6,
-    DR_7 = 7,
-    DR_8 = 8,
-    DR_9 = 9,
-    DR_10 = 10,
-    DR_11 = 11,
-    DR_12 = 12,
-    DR_13 = 13,
-    DR_14 = 14,
-    DR_15 = 15,
-    DR_16 = 16
-};
-
-class CursorPosition
+#include <DisplayConfigs.h>
+class Coordinates
 {
 public:
-    CursorPosition(int x, int y) : x(x), y(y) {}
+    Coordinates(int x, int y) : x(x), y(y) {}
     int x;
     int y;
+};
+
+class Dimensions
+{
+public:
+    Dimensions(int width, int height) : width(width), height(height) {}
+    int width;
+    int height;
+};
+
+class Box
+{
+public:
+    Box(Coordinates topLeftPos, Dimensions dims) : topLeft(topLeftPos), dimensions(dims) {}
+    Coordinates topLeft;
+    Dimensions dimensions;
+};
+
+enum IconSlotID
+{
+    ICON_SLOT_A = 0,
+    ICON_SLOT_B = 1,
+    ICON_SLOT_C = 2,
+    ICON_SLOT_D = 3,
+
+};
+
+enum IconSetID
+{
+    ICON_SET_TOP = 0,
+    ICON_SET_BOTTOM = 1
+};
+
+class IconSlot
+{
+public:
+    IconSlot(Box box = Box(Coordinates(0, 0), Dimensions(16, 16))) : box(box) {};
+    IconSlotID slotID;
+    Box box;
+    const unsigned char *bitmap = NULL;
+};
+
+class IconSet
+{
+public:
+    IconSet(IconSetID id = ICON_SET_TOP, Box box = Box(Coordinates(0, 0), Dimensions(128, 16))) : id(id), box(box) {};
+    Box box;
+    IconSetID id;
+    IconSlot icons[4] = {};
 };
 
 class Display : public Adafruit_SH1107
@@ -58,16 +68,30 @@ class Display : public Adafruit_SH1107
     using Adafruit_SH1107::Adafruit_SH1107;
 
 public:
-    void setCursor(CursorPosition pos);
-    void setCursor(int x, int y);
+    void begin();
     void setOffsetX(uint8_t offset);
-    void begin(uint8_t offsetX = 96);
-    CursorPosition centerText(String text);
-    // TODO: If we have a center position w/ just the character,
-    // doesn't make sense to clear the whole screen
-    // when we want to just clear the center character, or the icons etc.
-    void clearCenter();
-    void clearIcons();
+    // Clock settings
+    void voidsetOScillatorFrequency(OscillatorFrequency freq) { this->oscFreq = freq; };
+    void setDivideRatio(DivideRatio ratio) { this->divRatio = ratio; };
+    void sendClockSettings();
+    // Drawing and text functions
+    void setCursor(Coordinates pos);
+    void setCursor(int x, int y);
+    void setIconSlotBitmap(IconSetID setID, IconSlotID slotID, const unsigned char *bitmap);
+    void drawIcon(IconSetID setID, IconSlotID slotID);
+    void clearCharacterBox();
+    void clearIcons(IconSetID id);
+    // Helpers
+    Coordinates centerText(String text);
+
+private:
+    uint8_t offsetX = OLED_X_OFFSET;
+    OscillatorFrequency oscFreq = OSC_FREQ;
+    DivideRatio divRatio = DIVIDE_RATIO;
+    Box characterBox = Box(Coordinates(CHARACTER_BOX_POS_X, CHARACTER_BOX_POS_Y), Dimensions(CHARACTER_BOX_WIDTH, CHARACTER_BOX_HEIGHT));
+    IconSet topIcons = IconSet(ICON_SET_TOP, Box(Coordinates(TOP_ICON_SET_POS_X, TOP_ICON_SET_POS_Y), Dimensions(TOP_ICON_SET_WIDTH, TOP_ICON_SET_HEIGHT)));
+    IconSet bottomIcons = IconSet(ICON_SET_BOTTOM, Box(Coordinates(BOTTOM_ICON_SET_POS_X, BOTTOM_ICON_SET_POS_Y), Dimensions(BOTTOM_ICON_SET_WIDTH, BOTTOM_ICON_SET_HEIGHT)));
+    void setupIconSlots();
 };
 
 #endif // DISPLAY_H
