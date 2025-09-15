@@ -3,8 +3,6 @@
 #include <DeviceConfig.h>
 #include "Display.h"
 
-Display display(&Wire);
-
 struct Button
 {
   const uint8_t PIN;
@@ -15,6 +13,7 @@ struct Button
 Button buttonA = {A_BUTTON_PIN, 0, false};
 Button buttonB = {B_BUTTON_PIN, 0, false};
 Button buttonC = {C_BUTTON_PIN, 0, false};
+Display display(OLED_WIDTH, OLED_HEIGHT, &Wire, OLED_RST_PIN);
 
 // variables to keep track of the timing of recent interrupts
 unsigned long button_time = 0;
@@ -48,6 +47,8 @@ void IRAM_ATTR buttonISR()
   }
 }
 
+Coordinates cursorPos(16, 64);
+
 void setup()
 {
   // Setup Serial Communication
@@ -72,38 +73,51 @@ void setup()
 
   // Start OLED Display
   display.begin();
-  display.writeString("Tamagotchi Bubby", 0, 0, FontSize::small);
-  display.updateScreen();
+  display.clearDisplay();
+  display.setCursor(0, 64);
+  display.setTextSize(1);
+  display.setTextColor(SH110X_WHITE);
+  display.print("Tamagotchi-Bubby");
+  display.display();
+  delay(1000);
+  display.drawIcon(ICON_SET_TOP, ICON_SLOT_A);
+  display.drawIcon(ICON_SET_TOP, ICON_SLOT_B);
+  display.drawIcon(ICON_SET_TOP, ICON_SLOT_C);
+  display.drawIcon(ICON_SET_TOP, ICON_SLOT_D);
+  display.drawIcon(ICON_SET_BOTTOM, ICON_SLOT_A);
+  display.drawIcon(ICON_SET_BOTTOM, ICON_SLOT_B);
+  display.drawIcon(ICON_SET_BOTTOM, ICON_SLOT_C);
+  display.drawIcon(ICON_SET_BOTTOM, ICON_SLOT_D);
+  display.display();
 }
-
-int posX = 0;
 
 void loop()
 {
   if (buttonA.pressed)
   {
-    display.clear();
-    display.writeString("Button A pressed", 0, 20, FontSize::small);
-    display.updateScreen();
     buttonA.pressed = false;
+    display.clearDisplay();
+    const String message = "Button A pressed";
+    display.setCursor(display.centerText(message));
+    display.print(message);
+    display.display();
   }
   if (buttonB.pressed)
   {
-    display.clear();
-    display.writeString("Button B pressed", 0, 20, FontSize::small);
-    display.updateScreen();
     buttonB.pressed = false;
+    display.clearDisplay();
+    const String message = "Button B pressed";
+    display.setCursor(display.centerText(message));
+    display.print(message);
+    display.display();
   }
   if (buttonC.pressed)
   {
-    display.clear();
-    display.writeString("Button C pressed", 0, 20, FontSize::small);
-    display.updateScreen();
     buttonC.pressed = false;
-  }
-  posX++;
-  if (posX >= WIDTH)
-  {
-    posX = 0;
+    display.clearDisplay();
+    const String message = "Button C pressed";
+    display.setCursor(display.centerText(message));
+    display.print(message);
+    display.display();
   }
 }
