@@ -49,7 +49,11 @@ static const OscillatorFrequency OSC_FREQ = OSC_POR;
 static const DivideRatio DIVIDE_RATIO = DR_POR;
 
 // Offset for SH1107 display
-static const uint8_t OLED_X_OFFSET = 0; // 96? Actual device needs 0, simulator requires 96
+#ifdef SIMULATOR
+static const uint8_t OLED_X_OFFSET = 96; // Simulator requires 96
+#else
+static const uint8_t OLED_X_OFFSET = 0; // Actual device needs 0
+#endif
 
 // Icon  settings
 static const uint8_t ICON_WIDTH = 16;
